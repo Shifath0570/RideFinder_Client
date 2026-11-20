@@ -15,10 +15,10 @@ import {
     CheckCircle2,
     Loader2,
 } from "lucide-react";
-import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { doc, setDoc, serverTimestamp } from "firebase/firestore";
-import { auth, storage, db } from "@/lib/firebase";
+// import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
+// import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+// import { doc, setDoc, serverTimestamp } from "firebase/firestore";
+// import { auth, storage, db } from "@/lib/firebase";
 
 export default function SignUpPage() {
     const [formData, setFormData] = useState({

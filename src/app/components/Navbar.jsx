@@ -1,6 +1,8 @@
+
 "use client";
 
 import React, { useState, useEffect } from "react";
+import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Car,
@@ -14,6 +16,8 @@ import {
   Clock,
   Sparkles,
 } from "lucide-react";
+
+const MotionLink = motion.create(Link);
 
 const POPULAR_DESTINATIONS = [
   "Shah Amanat International Airport",
@@ -66,7 +70,7 @@ export default function RideFinderNavbar() {
         <div className="flex items-center justify-between h-16 gap-4">
           {/* LEFT: Brand Logo */}
           <div className="flex-shrink-0 flex items-center">
-            <motion.a
+            <MotionLink
               href="/"
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
@@ -82,7 +86,7 @@ export default function RideFinderNavbar() {
               <span className="text-xl font-bold tracking-tight text-gray-900">
                 Ride<span className="text-emerald-600">Finder</span>
               </span>
-            </motion.a>
+            </MotionLink>
           </div>
 
           {/* MIDDLE: Interactive Search Bar + Animated Suggestions */}
@@ -166,7 +170,7 @@ export default function RideFinderNavbar() {
             </AnimatePresence>
           </div>
 
-          {/* RIGHT: Auth Buttons with Smooth State Transition */}
+          {/* RIGHT: Auth Links with Smooth State Transition */}
           <div className="hidden md:flex items-center gap-3 min-w-[180px] justify-end">
             <AnimatePresence mode="wait" initial={false}>
               {!isLoggedIn ? (
@@ -178,22 +182,22 @@ export default function RideFinderNavbar() {
                   transition={{ duration: 0.2 }}
                   className="flex items-center gap-2.5"
                 >
-                  <motion.button
+                  <MotionLink
+                    href="/Auth/signin"
                     whileHover={{ scale: 1.03 }}
                     whileTap={{ scale: 0.96 }}
-                    onClick={() => setIsLoggedIn(true)}
                     className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-emerald-600 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer"
                   >
                     Log in
-                  </motion.button>
-                  <motion.button
+                  </MotionLink>
+                  <MotionLink
+                    href="/Auth/signup"
                     whileHover={{ scale: 1.03 }}
                     whileTap={{ scale: 0.96 }}
-                    onClick={() => setIsLoggedIn(true)}
                     className="px-4 py-2 text-sm font-semibold text-white bg-emerald-600 hover:bg-emerald-700 rounded-xl shadow-sm transition-colors cursor-pointer"
                   >
                     Sign up
-                  </motion.button>
+                  </MotionLink>
                 </motion.div>
               ) : (
                 <motion.div
@@ -290,30 +294,26 @@ export default function RideFinderNavbar() {
                 </div>
               </form>
 
-              {/* Mobile Auth Buttons */}
+              {/* Mobile Auth Links */}
               <div className="flex flex-col gap-2 pt-1">
                 {!isLoggedIn ? (
                   <>
-                    <motion.button
+                    <MotionLink
+                      href="/Auth/signin"
                       whileTap={{ scale: 0.98 }}
-                      onClick={() => {
-                        setIsLoggedIn(true);
-                        setIsMobileMenuOpen(false);
-                      }}
+                      onClick={() => setIsMobileMenuOpen(false)}
                       className="w-full py-2.5 text-center text-sm font-medium text-gray-700 border border-gray-300 rounded-xl hover:bg-gray-50"
                     >
                       Log in
-                    </motion.button>
-                    <motion.button
+                    </MotionLink>
+                    <MotionLink
+                      href="/Auth/signup"
                       whileTap={{ scale: 0.98 }}
-                      onClick={() => {
-                        setIsLoggedIn(true);
-                        setIsMobileMenuOpen(false);
-                      }}
+                      onClick={() => setIsMobileMenuOpen(false)}
                       className="w-full py-2.5 text-center text-sm font-semibold text-white bg-emerald-600 rounded-xl hover:bg-emerald-700 shadow-sm"
                     >
                       Sign up
-                    </motion.button>
+                    </MotionLink>
                   </>
                 ) : (
                   <>
@@ -345,3 +345,6 @@ export default function RideFinderNavbar() {
     </motion.nav>
   );
 }
+
+
+

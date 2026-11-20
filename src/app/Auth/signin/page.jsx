@@ -3,8 +3,8 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { Car, Mail, Lock, Eye, EyeOff, AlertCircle, CheckCircle2, Loader2 } from "lucide-react";
-import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "@/lib/firebase";
+// import { signInWithEmailAndPassword } from "firebase/auth";
+// import { auth } from "@/lib/firebase";
 
 export default function SignInPage() {
   const [email, setEmail] = useState("");
