@@ -20,6 +20,7 @@ import {
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { doc, setDoc, serverTimestamp } from "firebase/firestore";
+import { auth } from "@/services/firebase";
 
 export default function SignUpPage() {
   const [formData, setFormData] = useState({
