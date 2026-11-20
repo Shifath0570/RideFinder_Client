@@ -3,10 +3,12 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { Car, Mail, Lock, Eye, EyeOff, AlertCircle, CheckCircle2, Loader2 } from "lucide-react";
+import { auth } from "@/services/firebase";
 // import { signInWithEmailAndPassword } from "firebase/auth";
-// import { auth } from "@/lib/firebase";
+
 
 export default function SignInPage() {
+  console.log("verifiy", auth.config)
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
