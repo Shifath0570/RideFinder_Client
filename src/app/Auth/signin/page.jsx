@@ -5,7 +5,6 @@ import { motion } from "framer-motion";
 import { Car, Mail, Lock, Eye, EyeOff, AlertCircle, CheckCircle2, Loader2 } from "lucide-react";
 import { auth } from "@/services/firebase";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
-// import { signInWithEmailAndPassword } from "firebase/auth";
 
 
 export default function SignInPage() {
