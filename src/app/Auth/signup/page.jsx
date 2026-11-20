@@ -15,12 +15,25 @@ import {
     CheckCircle2,
     Loader2,
 } from "lucide-react";
+import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 // import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 // import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 // import { doc, setDoc, serverTimestamp } from "firebase/firestore";
 // import { auth, storage, db } from "@/lib/firebase";
 
 export default function SignUpPage() {
+    const auth = getAuth();
+    createUserWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+            // Signed up 
+            const user = userCredential.user;
+            // ...
+        })
+        .catch((error) => {
+            const errorCode = error.code;
+            const errorMessage = error.message;
+            // ..
+        });
     const [formData, setFormData] = useState({
         name: "",
         email: "",
