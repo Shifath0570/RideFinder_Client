@@ -3,6 +3,7 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Car,
@@ -16,6 +17,8 @@ import {
   Clock,
   Sparkles,
 } from "lucide-react";
+import { onAuthStateChanged, signOut } from "firebase/auth";
+import { auth } from "@/services/firebase";
 
 const MotionLink = motion.create(Link);
 
@@ -27,11 +30,22 @@ const POPULAR_DESTINATIONS = [
 ];
 
 export default function RideFinderNavbar() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const router = useRouter();
+  const [user, setUser] = useState(null);
+  const [authLoading, setAuthLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+
+  // Sync navbar state with Firebase Authentication
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+      setAuthLoading(false);
+    });
+    return () => unsubscribe();
+  }, []);
 
   // Detect scroll for dynamic navbar elevation & backdrop blur
   useEffect(() => {
@@ -41,6 +55,16 @@ export default function RideFinderNavbar() {
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      setIsMobileMenuOpen(false);
+      router.push("/Auth/signin");
+    } catch (error) {
+      console.error("Error signing out:", error);
+    }
+  };
 
   const handleSearch = (e) => {
     e.preventDefault();
@@ -170,61 +194,73 @@ export default function RideFinderNavbar() {
             </AnimatePresence>
           </div>
 
-          {/* RIGHT: Auth Links with Smooth State Transition */}
+          {/* RIGHT: Auth Links with Firebase State Transition */}
           <div className="hidden md:flex items-center gap-3 min-w-[180px] justify-end">
-            <AnimatePresence mode="wait" initial={false}>
-              {!isLoggedIn ? (
-                <motion.div
-                  key="logged-out"
-                  initial={{ opacity: 0, x: 10 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -10 }}
-                  transition={{ duration: 0.2 }}
-                  className="flex items-center gap-2.5"
-                >
-                  <MotionLink
-                    href="/Auth/signin"
-                    whileHover={{ scale: 1.03 }}
-                    whileTap={{ scale: 0.96 }}
-                    className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-emerald-600 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer"
+            {!authLoading && (
+              <AnimatePresence mode="wait" initial={false}>
+                {!user ? (
+                  <motion.div
+                    key="logged-out"
+                    initial={{ opacity: 0, x: 10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: -10 }}
+                    transition={{ duration: 0.2 }}
+                    className="flex items-center gap-2.5"
                   >
-                    Log in
-                  </MotionLink>
-                  <MotionLink
-                    href="/Auth/signup"
-                    whileHover={{ scale: 1.03 }}
-                    whileTap={{ scale: 0.96 }}
-                    className="px-4 py-2 text-sm font-semibold text-white bg-emerald-600 hover:bg-emerald-700 rounded-xl shadow-sm transition-colors cursor-pointer"
+                    <MotionLink
+                      href="/Auth/signin"
+                      whileHover={{ scale: 1.03 }}
+                      whileTap={{ scale: 0.96 }}
+                      className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-emerald-600 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer"
+                    >
+                      Log in
+                    </MotionLink>
+                    <MotionLink
+                      href="/Auth/signup"
+                      whileHover={{ scale: 1.03 }}
+                      whileTap={{ scale: 0.96 }}
+                      className="px-4 py-2 text-sm font-semibold text-white bg-emerald-600 hover:bg-emerald-700 rounded-xl shadow-sm transition-colors cursor-pointer"
+                    >
+                      Sign up
+                    </MotionLink>
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    key="logged-in"
+                    initial={{ opacity: 0, x: 10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: -10 }}
+                    transition={{ duration: 0.2 }}
+                    className="flex items-center gap-2.5"
                   >
-                    Sign up
-                  </MotionLink>
-                </motion.div>
-              ) : (
-                <motion.div
-                  key="logged-in"
-                  initial={{ opacity: 0, x: 10 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -10 }}
-                  transition={{ duration: 0.2 }}
-                  className="flex items-center gap-2.5"
-                >
-                  <div className="flex items-center gap-2 text-sm font-medium text-gray-700 bg-gray-100 border border-gray-200/70 px-3.5 py-1.5 rounded-full">
-                    <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-                    <User className="h-4 w-4 text-emerald-600" />
-                    <span>Rider</span>
-                  </div>
-                  <motion.button
-                    whileHover={{ scale: 1.03 }}
-                    whileTap={{ scale: 0.96 }}
-                    onClick={() => setIsLoggedIn(false)}
-                    className="flex items-center gap-1.5 px-3.5 py-2 text-sm font-medium text-red-600 hover:bg-red-50 rounded-xl transition-colors cursor-pointer"
-                  >
-                    <LogOut className="h-4 w-4" />
-                    <span>Log out</span>
-                  </motion.button>
-                </motion.div>
-              )}
-            </AnimatePresence>
+                    <div className="flex items-center gap-2 text-sm font-medium text-gray-700 bg-gray-100 border border-gray-200/70 px-3.5 py-1.5 rounded-full">
+                      <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+                      {user.photoURL ? (
+                        <img
+                          src={user.photoURL}
+                          alt={user.displayName || "Rider"}
+                          className="h-5 w-5 rounded-full object-cover"
+                        />
+                      ) : (
+                        <User className="h-4 w-4 text-emerald-600" />
+                      )}
+                      <span className="max-w-[110px] truncate">
+                        {user.displayName || user.email?.split("@")[0] || "Rider"}
+                      </span>
+                    </div>
+                    <motion.button
+                      whileHover={{ scale: 1.03 }}
+                      whileTap={{ scale: 0.96 }}
+                      onClick={handleLogout}
+                      className="flex items-center gap-1.5 px-3.5 py-2 text-sm font-medium text-red-600 hover:bg-red-50 rounded-xl transition-colors cursor-pointer"
+                    >
+                      <LogOut className="h-4 w-4" />
+                      <span>Log out</span>
+                    </motion.button>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            )}
           </div>
 
           {/* Mobile Hamburger Button */}
@@ -295,49 +331,50 @@ export default function RideFinderNavbar() {
               </form>
 
               {/* Mobile Auth Links */}
-              <div className="flex flex-col gap-2 pt-1">
-                {!isLoggedIn ? (
-                  <>
-                    <MotionLink
-                      href="/Auth/signin"
-                      whileTap={{ scale: 0.98 }}
-                      onClick={() => setIsMobileMenuOpen(false)}
-                      className="w-full py-2.5 text-center text-sm font-medium text-gray-700 border border-gray-300 rounded-xl hover:bg-gray-50"
-                    >
-                      Log in
-                    </MotionLink>
-                    <MotionLink
-                      href="/Auth/signup"
-                      whileTap={{ scale: 0.98 }}
-                      onClick={() => setIsMobileMenuOpen(false)}
-                      className="w-full py-2.5 text-center text-sm font-semibold text-white bg-emerald-600 rounded-xl hover:bg-emerald-700 shadow-sm"
-                    >
-                      Sign up
-                    </MotionLink>
-                  </>
-                ) : (
-                  <>
-                    <div className="flex items-center justify-between px-3 py-2 bg-gray-50 rounded-xl border border-gray-200/70">
-                      <div className="flex items-center gap-2 text-sm font-medium text-gray-700">
-                        <User className="h-4 w-4 text-emerald-600" />
-                        <span>Signed in as Rider</span>
+              {!authLoading && (
+                <div className="flex flex-col gap-2 pt-1">
+                  {!user ? (
+                    <>
+                      <MotionLink
+                        href="/Auth/signin"
+                        whileTap={{ scale: 0.98 }}
+                        onClick={() => setIsMobileMenuOpen(false)}
+                        className="w-full py-2.5 text-center text-sm font-medium text-gray-700 border border-gray-300 rounded-xl hover:bg-gray-50"
+                      >
+                        Log in
+                      </MotionLink>
+                      <MotionLink
+                        href="/Auth/signup"
+                        whileTap={{ scale: 0.98 }}
+                        onClick={() => setIsMobileMenuOpen(false)}
+                        className="w-full py-2.5 text-center text-sm font-semibold text-white bg-emerald-600 rounded-xl hover:bg-emerald-700 shadow-sm"
+                      >
+                        Sign up
+                      </MotionLink>
+                    </>
+                  ) : (
+                    <>
+                      <div className="flex items-center justify-between px-3 py-2 bg-gray-50 rounded-xl border border-gray-200/70">
+                        <div className="flex items-center gap-2 text-sm font-medium text-gray-700">
+                          <User className="h-4 w-4 text-emerald-600" />
+                          <span className="truncate">
+                            {user.displayName || user.email}
+                          </span>
+                        </div>
+                        <span className="h-2 w-2 rounded-full bg-emerald-500" />
                       </div>
-                      <span className="h-2 w-2 rounded-full bg-emerald-500" />
-                    </div>
-                    <motion.button
-                      whileTap={{ scale: 0.98 }}
-                      onClick={() => {
-                        setIsLoggedIn(false);
-                        setIsMobileMenuOpen(false);
-                      }}
-                      className="w-full py-2.5 flex items-center justify-center gap-2 text-sm font-medium text-red-600 border border-red-200 bg-red-50 rounded-xl"
-                    >
-                      <LogOut className="h-4 w-4" />
-                      <span>Log out</span>
-                    </motion.button>
-                  </>
-                )}
-              </div>
+                      <motion.button
+                        whileTap={{ scale: 0.98 }}
+                        onClick={handleLogout}
+                        className="w-full py-2.5 flex items-center justify-center gap-2 text-sm font-medium text-red-600 border border-red-200 bg-red-50 rounded-xl"
+                      >
+                        <LogOut className="h-4 w-4" />
+                        <span>Log out</span>
+                      </motion.button>
+                    </>
+                  )}
+                </div>
+              )}
             </div>
           </motion.div>
         )}
@@ -345,6 +382,11 @@ export default function RideFinderNavbar() {
     </motion.nav>
   );
 }
+
+
+
+
+
 
 
 
