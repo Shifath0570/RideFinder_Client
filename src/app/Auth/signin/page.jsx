@@ -1,25 +1,25 @@
+
 "use client";
 
 import React, { useState } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { Car, Mail, Lock, Eye, EyeOff, AlertCircle, CheckCircle2, Loader2 } from "lucide-react";
+import {
+  Car,
+  Mail,
+  Lock,
+  Eye,
+  EyeOff,
+  AlertCircle,
+  CheckCircle2,
+  Loader2,
+} from "lucide-react";
+import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "@/services/firebase";
-import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
-
 
 export default function SignInPage() {
-  const auth = getAuth();
-  signInWithEmailAndPassword(auth, email, password)
-    .then((userCredential) => {
-      // Signed in 
-      const user = userCredential.user;
-      // ...
-    })
-    .catch((error) => {
-      const errorCode = error.code;
-      const errorMessage = error.message;
-    });
-  console.log("verifiy", auth.config)
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -34,15 +34,23 @@ export default function SignInPage() {
     setLoading(true);
 
     try {
-      const credential = await signInWithEmailAndPassword(auth, email.trim(), password);
-      setSuccess(`Signed in as ${credential.user.displayName || credential.user.email}`);
-      // Optional redirect: router.push("/")
+      const credential = await signInWithEmailAndPassword(
+        auth,
+        email.trim(),
+        password
+      );
+      setSuccess(
+        `Signed in as ${credential.user.displayName || credential.user.email}`
+      );
+      router.push("/");
     } catch (err) {
       const codeMap = {
         "auth/invalid-credential": "Invalid email or password.",
         "auth/user-not-found": "No account found with this email.",
         "auth/wrong-password": "Incorrect password. Please try again.",
-        "auth/too-many-requests": "Too many failed attempts. Please try again later.",
+        "auth/invalid-email": "Please enter a valid email address.",
+        "auth/too-many-requests":
+          "Too many failed attempts. Please try again later.",
       };
       setError(codeMap[err.code] || err.message || "Failed to sign in.");
     } finally {
@@ -60,15 +68,17 @@ export default function SignInPage() {
       >
         {/* Header */}
         <div className="flex flex-col items-center text-center mb-8">
-          <a href="" className="flex items-center gap-2.5 mb-3">
+          <Link href="/" className="flex items-center gap-2.5 mb-3">
             <div className="bg-emerald-600 p-2.5 rounded-xl text-white shadow-sm">
               <Car className="h-6 w-6" />
             </div>
             <span className="text-2xl font-bold tracking-tight text-gray-900">
               Ride<span className="text-emerald-600">Finder</span>
             </span>
-          </a>
-          <h1 className="text-2xl font-extrabold text-gray-900">Welcome back</h1>
+          </Link>
+          <h1 className="text-2xl font-extrabold text-gray-900">
+            Welcome back
+          </h1>
           <p className="text-sm text-gray-500 mt-1">
             Sign in with your email and password
           </p>
@@ -135,7 +145,11 @@ export default function SignInPage() {
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 cursor-pointer"
                 aria-label="Toggle password visibility"
               >
-                {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                {showPassword ? (
+                  <EyeOff className="h-4 w-4" />
+                ) : (
+                  <Eye className="h-4 w-4" />
+                )}
               </button>
             </div>
           </div>
@@ -160,11 +174,23 @@ export default function SignInPage() {
 
         <p className="mt-6 text-center text-sm text-gray-500">
           Don&apos;t have an account?{" "}
-          <a href="/signup" className="font-semibold text-emerald-600 hover:text-emerald-700">
+          <Link
+            href="/Auth/signup"
+            className="font-semibold text-emerald-600 hover:text-emerald-700"
+          >
             Sign up
-          </a>
+          </Link>
         </p>
       </motion.div>
     </div>
   );
 }
+
+
+
+
+
+
+
+
+
