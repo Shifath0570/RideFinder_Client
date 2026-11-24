@@ -23,11 +23,11 @@ const NAVIGATION_LINKS = [
 ];
 
 const SUPPORT_LINKS = [
-  { label: "Help Center", href: "/support/help-center" },
-  { label: "Terms of Service", href: "/legal/terms" },
-  { label: "Privacy Policy", href: "/legal/privacy" },
-  { label: "Cookie Settings", href: "/legal/cookies" },
-  { label: "Contact Support", href: "/support/contact" },
+  { label: "Help Center", href: "/PublicRoute/helpcenter" },
+  { label: "Terms of Service", href: "/PublicRoute/termsofservice" },
+  { label: "Privacy Policy", href: "/PublicRoute/privacypolicy" },
+  { label: "Cookie Settings", href: "/PublicRoute/cookiesettings" },
+  { label: "Contact Support", href: "/PublicRoute/contactsupport" },
 ];
 
 const CONTACT_ITEMS = [
