@@ -15,11 +15,11 @@ import {
 } from "lucide-react";
 
 const NAVIGATION_LINKS = [
-  { label: "Find a Ride", href: "/rides" },
-  { label: "Become a Driver", href: "/driver/register" },
-  { label: "Safety Guidelines", href: "/safety" },
-  { label: "Pricing & Fares", href: "/pricing" },
-  { label: "City Coverage", href: "/coverage" },
+  { label: "Find a Ride", href: "/PublicRoute/findride" },
+  { label: "Become a Driver", href: "/PublicRoute/becomedriver" },
+  { label: "Safety Guidelines", href: "/PublicRoute/safetyguidelines" },
+  { label: "Pricing & Fares", href: "/PublicRoute/pricingfares" },
+  { label: "City Coverage", href: "/PublicRoute/citycoverage" },
 ];
 
 const SUPPORT_LINKS = [
